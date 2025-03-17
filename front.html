@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Legal AI Chatbot</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../static/styles.css">
+    <link rel="stylesheet" href="front2.css"> <!-- Link to CSS file -->
     <style>
         .about-us-section {
             background: rgba(255, 255, 255, 0.8);
@@ -29,27 +29,32 @@
     </style>
 </head>
 <body>
-    <header>
+
+    <div class="splash-screen" id="splashScreen">  <!-- Splash Screen Container -->
+        <h1 class="splash-text">jusTIndia</h1>
+    </div>
+
+    <header class="hidden" id="headerContent">  <!-- Header - initially hidden -->
         <nav class="header-nav">
             <a href="front.html" class="logo">
-                <img src="..\static\images\freepik-flat-duotone-circle-balance-law-office-logo-20250308083922tCYk.png" alt="jusTIndia Logo">  <!-- Replace with your logo image URL -->
+                <img src="freepik-flat-duotone-circle-balance-law-office-logo-20250308083922tCYk.png" alt="jusTIndia Logo" class="logo-img">
                 <span class="logo-text">jusTIndia</span>
             </a>
             <ul class="header-links">
-                <li><a href="front.html">Home</a></li>
-                <li><a href="#features-section">Features</a></li>
-                <li><a href="#blog-section">Blog</a></li>
-                <li><a href="#about-us-section">About Us</a></li>
-                <li><a href="#">Contact Us</a></li>
+                <li><a href="front.html" class="nav-link">Home</a></li>
+                <li><a href="#features-section" class="nav-link">Features</a></li>
+                <li><a href="#blog-section" class="nav-link">Blog</a></li>
+                <li><a href="#about-us-section" class="nav-link">About Us</a></li>
+                <li><a href="#" class="nav-link">Contact Us</a></li>
             </ul>
             <div class="header-buttons">
                 <a href="#" class="header-button demo-button">Get a demo</a>
-                <a href="signup.html" class="header-button signup-button">Sign up</a>
+                <a href="signup.HTML" class="header-button signup-button">Sign up</a>
             </div>
         </nav>
     </header>
 
-    <div class="container">
+    <div class="container hidden" id="mainContent">  <!-- Container - initially hidden -->
         <h1>Your <span>Legal</span> AI Advisor</h1>
         <p>Get accurate legal information and document templates instantly. Just ask!</p>
 
@@ -70,7 +75,7 @@
             <div class="input">
                 <input type="text" placeholder="Type your message...">
                 <div class="mic-icon">
-
+                    <!--  Heroicons Microphone SVG (Solid Style) -->
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                         <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0c0 2.937 1.846 5.477 4 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-1v-2.07z" clip-rule="evenodd" />
                     </svg>
@@ -84,7 +89,7 @@
         </div>
     </div>
 
-    <main>
+    <main class="hidden" id="mainSections"> <!-- Main sections - initially hidden -->
 
         <section id="features-section" class="features-section">
             <h1>Explore Our Powerful Features</h1>
@@ -154,7 +159,7 @@
                 </div>
             </div>
         </section>
-
+        <!-- End Blog Section -->
 
         <!-- About Us Section -->
         <section id="about-us-section" class="about-us-section">
@@ -163,9 +168,13 @@
         </section>
         <!-- End About Us Section -->
 
-
     </main>
 
+     <footer>
+        <p>© 2024 JusTIndia. All rights reserved.</p>
+    </footer>
+
      <script src="front2.js"></script> <!-- Link to JavaScript file -->
+     <script src="splash.js"></script> <!-- Link to splash screen JavaScript -->
 </body>
 </html>
