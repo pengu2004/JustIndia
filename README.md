@@ -32,7 +32,6 @@ python ollama_backend.py
 You can serve the frontend using Python's built-in HTTP server:
 
 ```sh
-cd frontend
 python -m http.server 5500
 ```
 
