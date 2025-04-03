@@ -225,7 +225,45 @@ html {
     transform: translateY(-5px);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
+#user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
+#user-greeting {
+    color: #4f46e5;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+#logout-btn {
+    background-color: #4f46e5;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+#logout-btn:hover {
+    background-color: #3b38b7;
+}
+
+#google-login-btn {
+    background-color: #4f46e5;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+#google-login-btn:hover {
+    background-color: #3b38b7;
+}
 
 .feature-box h2 {
     font-size: 1.6rem;
@@ -484,7 +522,7 @@ nav.header-nav {
     color: white;
 }
 
-.logo img {
+.logo-img {
     height: 50px; /* Increased logo height */
     margin-right: 10px;
     height: auto;

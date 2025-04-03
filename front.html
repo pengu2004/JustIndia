@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="front2.css">
 </head>
+
 <body>
 
     <div class="splash-screen" id="splashScreen">
@@ -16,7 +18,8 @@
     <header id="headerContent" class="hidden">
         <nav class="header-nav">
             <a href="front.html" class="logo">
-                <img src="freepik-flat-duotone-circle-balance-law-office-logo-20250308083922tCYk.png" alt="jusTIndia Logo" class="logo-img">
+                <img src="static/images/freepik-flat-duotone-circle-balance-law-office-logo-20250308083922tCYk.png" width="100" height="100"
+                    alt="jusTIndia Logo" class="logo-img">
                 <span class="logo-text">jusTIndia</span>
             </a>
             <ul class="header-links">
@@ -27,8 +30,20 @@
                 <li><a href="#" class="nav-link">Contact Us</a></li>
             </ul>
             <div class="header-buttons">
-                <a href="#" class="header-button demo-button">Get a demo</a>
-                <a href="signup.HTML" class="header-button signup-button">Sign up</a>
+                <!-- User greeting and logout button (initially hidden) -->
+                <div id="user-profile" style="display: none;">
+                    <span id="user-greeting">Hi, User</span>
+                    <button id="logout-btn" class="header-button logout-button" >
+                    Logout</button>
+                </div>
+
+                <!-- Login buttons (initially visible) -->
+                <div id="login-buttons">
+                    <a href="#" class="header-button demo-button">Get a demo</a>
+                    <button id="google-login-btn"
+>                        Sign in with Google
+                    </button>
+                </div>
             </div>
         </nav>
     </header>
@@ -38,29 +53,32 @@
         <p>Get accurate legal information and document templates instantly. Just ask!</p>
 
         <div class="chatbox">
-             <div class="message bot">
-              <div class="avatar"></div>
+            <div class="message bot">
+                <div class="avatar"></div>
                 <div class="text">Hello! How can I assist you with legal queries today?</div>
             </div>
             <div class="message user">
-               <div class="text">What is the process for registering a trademark?</div>
-              <div class="avatar"></div>
+                <div class="text">What is the process for registering a trademark?</div>
+                <div class="avatar"></div>
             </div>
             <div class="message bot">
-              <div class="avatar"></div>
-                <div class="text">To register a trademark, you need to file an application with the trademark office and provide details about your brand, logo, or name. Let me know if you'd like the detailed steps!</div>
+                <div class="avatar"></div>
+                <div class="text">To register a trademark, you need to file an application with the trademark office and
+                    provide details about your brand, logo, or name. Let me know if you'd like the detailed steps!</div>
             </div>
 
             <div class="input">
                 <input type="text" placeholder="Type your message...">
                 <div class="mic-icon" id="micButton">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                        <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0c0 2.937 1.846 5.477 4 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-1v-2.07z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd"
+                            d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0c0 2.937 1.846 5.477 4 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-1v-2.07z"
+                            clip-rule="evenodd" />
                     </svg>
                 </div>
                 <button>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+                        <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
                     </svg>
                 </button>
             </div>
@@ -70,22 +88,32 @@
     <main id="mainSections" class="hidden">
         <section id="features-section" class="features-section">
             <h1>Explore Our Powerful Features</h1>
-            <p class="intro">Discover how our Legal AI Chatbot can revolutionize your legal research and document handling.</p>
+            <p class="intro">Discover how our Legal AI Chatbot can revolutionize your legal research and document
+                handling.</p>
 
             <div class="feature-boxes-container">
                 <section class="feature-item feature-box hidden">
                     <h2>Legal Query Answering</h2>
-                    <p>Get instant and accurate answers to your legal questions. Our AI is trained on a vast database of legal information to provide you with relevant insights and explanations. Whether you need to understand a specific law, legal procedure, or case precedent, simply ask your question and receive a comprehensive response.</p>
+                    <p>Get instant and accurate answers to your legal questions. Our AI is trained on a vast database of
+                        legal information to provide you with relevant insights and explanations. Whether you need to
+                        understand a specific law, legal procedure, or case precedent, simply ask your question and
+                        receive a comprehensive response.</p>
                 </section>
 
                 <section class="feature-item feature-box hidden">
                     <h2>Document Generation</h2>
-                    <p>Simplify your legal paperwork with our document generation feature. Create professional legal documents like contracts, agreements, and letters in minutes. Just input the necessary details, and our AI will generate a customized document tailored to your specific needs. Save time and reduce errors with automated document creation.</p>
+                    <p>Simplify your legal paperwork with our document generation feature. Create professional legal
+                        documents like contracts, agreements, and letters in minutes. Just input the necessary details,
+                        and our AI will generate a customized document tailored to your specific needs. Save time and
+                        reduce errors with automated document creation.</p>
                 </section>
 
                 <section class="feature-item feature-box hidden">
                     <h2>Case Risk Prediction</h2>
-                    <p>Assess the potential risks and outcomes of legal cases with our advanced case risk prediction tool. By analyzing case details and historical legal data, our AI can provide insights into the likelihood of success and potential challenges. Make informed decisions and strategize effectively with data-driven risk assessments.</p>
+                    <p>Assess the potential risks and outcomes of legal cases with our advanced case risk prediction
+                        tool. By analyzing case details and historical legal data, our AI can provide insights into the
+                        likelihood of success and potential challenges. Make informed decisions and strategize
+                        effectively with data-driven risk assessments.</p>
                 </section>
             </div>
         </section>
@@ -102,7 +130,8 @@
 
                             </div>
                         </div>
-                        <h2 class="featured-title">AI-Powered Due Diligence: Transforming Legal Processes in 2025, <br> Edition 22</h2>
+                        <h2 class="featured-title">AI-Powered Due Diligence: Transforming Legal Processes in 2025, <br>
+                            Edition 22</h2>
                     </section>
 
                     <div class="editor-picks-container">
@@ -139,15 +168,19 @@
 
         <section id="about-us-section" class="about-us-section">
             <h1>About jusTIndia</h1>
-            <p>Welcome to jusTIndia, your AI-powered legal assistant, designed to make Indian legal information accessible to everyone. Our mission is simple – to empower people by providing them with the knowledge they need to navigate the complexities of Indian law with confidence. Whether you’re seeking information on civil, criminal, family, or property law, jusTIndia is here to assist you, instantly.</p>
+            <p>Welcome to jusTIndia, your AI-powered legal assistant, designed to make Indian legal information
+                accessible to everyone. Our mission is simple – to empower people by providing them with the knowledge
+                they need to navigate the complexities of Indian law with confidence. Whether you're seeking information
+                on civil, criminal, family, or property law, jusTIndia is here to assist you, instantly.</p>
         </section>
 
     </main>
 
-     <footer>
+    <footer>
         <p>© 2024 JusTIndia. All rights reserved.</p>
     </footer>
 
-     <script src="front2.js"></script>
+    <script src="front2.js"></script>
 </body>
+
 </html>

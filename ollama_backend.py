@@ -1,66 +1,84 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoModelForSequenceClassification
+from sentence_transformers import SentenceTransformer, util
 import torch
+import torch.nn.functional as F
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend communication
+CORS(app)
 
-# Load the Hugging Face models
-LAW_LLM_NAME = "Update0936/Law_llm"
-INLEGAL_BERT_NAME = "law-ai/InLegalBERT"  # Replace with the correct model name for InLegal-BERT
+# Model names
+LAW_LLM_NAME = "nlpaueb/legal-bert-base-uncased"
+INLEGAL_BERT_NAME = "law-ai/InLegalBERT"
+INLEGAL_SBERT_NAME = "bhavyagiri/InLegal-Sbert"
 
-# Load tokenizers and models
+print("Loading models...")
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+# Load models
 law_llm_tokenizer = AutoTokenizer.from_pretrained(LAW_LLM_NAME)
-law_llm_model = AutoModelForCausalLM.from_pretrained(LAW_LLM_NAME)
-
+law_llm_model = AutoModelForCausalLM.from_pretrained(LAW_LLM_NAME, trust_remote_code=True).to(device)
 inlegal_bert_tokenizer = AutoTokenizer.from_pretrained(INLEGAL_BERT_NAME)
-inlegal_bert_model = AutoModelForSequenceClassification.from_pretrained(INLEGAL_BERT_NAME)
+inlegal_bert_model = AutoModelForSequenceClassification.from_pretrained(INLEGAL_BERT_NAME).to(device)
+sbert_model = SentenceTransformer(INLEGAL_SBERT_NAME).to(device)
 
-def preprocess_query_with_inlegal_bert(query):
-    """
-    Preprocess the user query using InLegal-BERT.
-    For example, classify the query or extract legal entities.
-    """
-    # Tokenize the input query
-    inputs = inlegal_bert_tokenizer(query, return_tensors="pt", truncation=True, max_length=512)
+print("Models loaded successfully.")
 
-    # Perform inference with InLegal-BERT
-    with torch.no_grad():
-        outputs = inlegal_bert_model(**inputs)
+# Legal categories with sample descriptions for similarity matching
+LEGAL_CATEGORIES = {
+    "Contract Law": "Deals with agreements, contracts, and breach of contract.",
+    "Criminal Law": "Covers crimes, penalties, and criminal proceedings.",
+    "Family Law": "Related to marriage, divorce, child custody, and inheritance.",
+    "Property Law": "Covers ownership rights, real estate, and land disputes.",
+    "Intellectual Property": "Deals with patents, copyrights, trademarks.",
+    "Employment Law": "Covers worker rights, discrimination, wages.",
+    "Tax Law": "Related to income tax, corporate tax, and financial regulations.",
+    "Corporate Law": "Deals with business regulations, mergers, acquisitions.",
+    "Cyber Law": "Covers online fraud, data protection, and digital rights.",
+    "Environmental Law": "Related to pollution, sustainability, and environmental policies."
+}
 
-    # Example: Get the predicted class (assuming it's a classification model)
-    predicted_class = torch.argmax(outputs.logits, dim=1).item()
+# Precompute embeddings for legal categories
+category_texts = list(LEGAL_CATEGORIES.values())
+category_embeddings = sbert_model.encode(category_texts, convert_to_tensor=True)
 
-    # Map the predicted class to a legal category (example)
-    legal_categories = ["Contract Law", "Criminal Law", "Family Law", "Property Law"]
-    legal_category = legal_categories[predicted_class]
+def get_best_legal_category(query):
+    """Finds the most relevant legal category based on SBERT similarity"""
+    query_embedding = sbert_model.encode(query, convert_to_tensor=True)
+    similarities = util.pytorch_cos_sim(query_embedding, category_embeddings)[0]
+    
+    best_index = torch.argmax(similarities).item()
+    best_category = list(LEGAL_CATEGORIES.keys())[best_index]
+    confidence = similarities[best_index].item()
 
-    # Return the processed query (you can modify this based on your use case)
-    processed_query = f"{query} [Legal Category: {legal_category}]"
-    return processed_query
+    if confidence > 0.5:
+        print(f"Best match: {best_category} (confidence {confidence:.2f})")
+        return f"{query} [Legal Context: {best_category}]"
+    else:
+        return query
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.json
     user_message = data.get("message")
-
+    
     if not user_message:
         return jsonify({"error": "No message provided"}), 400
 
-    # Preprocess the query using InLegal-BERT
-    processed_query = preprocess_query_with_inlegal_bert(user_message)
+    try:
+        # Enhance query with SBERT-based legal category detection
+        processed_query = get_best_legal_category(user_message)
 
-    # Tokenize the processed query for the LLM
-    inputs = law_llm_tokenizer(processed_query, return_tensors="pt", truncation=True, max_length=512)
+        # Few-shot prompting (improves response quality)
+        
 
-    # Generate response using the LLM
-    with torch.no_grad():
-        output = law_llm_model.generate(**inputs, max_length=1024)
+        # Tokenize input
 
-    bot_response = law_llm_tokenizer.decode(output[0], skip_special_tokens=True)
-
-    return jsonify({"response": bot_response})
+        # Generate response
+    except Exception as e:
+        return jsonify({"error": f"Error processing request: {str(e)}"}), 500
 
 if __name__ == '__main__':
+    print("Starting Flask server on port 5000...")
     app.run(debug=True, port=5000)
