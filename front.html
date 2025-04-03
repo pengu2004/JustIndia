@@ -38,21 +38,24 @@
         <p>Get accurate legal information and document templates instantly. Just ask!</p>
 
         <div class="chatbox">
-             <div class="message bot">
-              <div class="avatar"></div>
-                <div class="text">Hello! How can I assist you with legal queries today?</div>
-            </div>
-            <div class="message user">
-               <div class="text">What is the process for registering a trademark?</div>
-              <div class="avatar"></div>
-            </div>
-            <div class="message bot">
-              <div class="avatar"></div>
-                <div class="text">To register a trademark, you need to file an application with the trademark office and provide details about your brand, logo, or name. Let me know if you'd like the detailed steps!</div>
-            </div>
+            <div class="messages-container" id = "messagesContainer"> <!-- Added messages-container -->
+
+                <div class="message bot">
+                    <div class="avatar"></div>
+                    <div class="text">Hello! How can I assist you with legal queries today?</div>
+                </div>
+                <div class="message user">
+                    <div class="text">What is the process for registering a trademark?</div>
+                    <div class="avatar"></div>
+                </div>
+                <div class="message bot">
+                    <div class="avatar"></div>
+                    <div class="text">To register a trademark, you need to file an application with the trademark office and provide details about your brand, logo, or name. Let me know if you'd like the detailed steps!</div>
+                </div>
+            </div> <!-- closing messages-container -->
 
             <div class="input">
-                <input type="text" placeholder="Type your message...">
+                <textarea placeholder="Type your message..."></textarea> <!-- Changed input to textarea -->
                 <div class="mic-icon" id="micButton">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                         <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0c0 2.937 1.846 5.477 4 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-1v-2.07z" clip-rule="evenodd" />
