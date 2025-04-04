@@ -1,30 +1,226 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
     // Splash Screen Elements
     const splashScreen = document.getElementById('splashScreen');
     const headerContent = document.getElementById('headerContent');
     const mainContent = document.getElementById('mainContent');
     const mainSections = document.getElementById('mainSections');
 
+    // Chat UI Elements
+    const chatbox = document.querySelector(".chatbox");
+    const inputContainer = document.querySelector(".chatbox .input");
+    const inputField = document.querySelector(".chatbox .input input");
+    const sendButton = document.querySelector(".chatbox .input button");
+    
     // Voice-to-Text Elements
     const micButton = document.getElementById("micButton");
-    const textArea = document.querySelector(".chatbox .input textarea");
-    const messagesContainer = document.getElementById("messagesContainer");  //Get the message
-    const sendButton = document.querySelector(".chatbox .input button");
+    const micIcon = document.querySelector(".mic-icon");
+    
+    // Authentication UI Elements
+    const googleLoginButton = document.getElementById('google-login-btn');
+    const userProfile = document.getElementById('user-profile');
+    const userGreeting = document.getElementById('user-greeting');
+    const logoutButton = document.getElementById('logout-btn');
+    const loginButtons = document.getElementById('login-buttons');
 
-    // Speech Recognition setup (if applicable - remove if not used)
+    // Initialize Firebase modules
+    let auth;
+    try {
+        // Import Firebase modules
+        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js");
+        const { getAuth, signOut, onAuthStateChanged, 
+                GoogleAuthProvider, signInWithPopup } = await import("https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js");
+        const { getAnalytics } = await import("https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js");
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuzG5Xx9wXbecaaYk9UwBaZAw3YyawbUY",
+            authDomain: "justindiauth.firebaseapp.com",
+            projectId: "justindiauth",
+            storageBucket: "justindiauth.firebasestorage.app",
+            messagingSenderId: "807997624460",
+            appId: "1:807997624460:web:526326bbc77fdbbc9a2ba9",
+            measurementId: "G-59PYTNS2ZP"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+        
+        // Set up auth state listener
+        if (auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // User is signed in
+                    showAuthenticatedUI(user);
+                    console.log("User logged in:", user.displayName || user.email);
+                } else {
+                    // User is signed out
+                    showUnauthenticatedUI();
+                    console.log("User logged out");
+                }
+            });
+        }
+        
+        // Handle Google login
+        if (googleLoginButton) {
+            googleLoginButton.addEventListener('click', function() {
+                console.log("Google login button clicked");
+                signInWithPopup(auth, provider)
+                    .then((result) => {
+                        // Google Sign In successful
+                        const user = result.user;
+                        console.log("Google login successful", user.displayName);
+                    })
+                    .catch((error) => {
+                        // Handle errors
+                        console.error("Google login error:", error);
+                        alert(`Login failed: ${error.message}`);
+                    });
+            });
+        } else {
+            console.error("Google login button not found in the DOM");
+        }
+        
+        // Handle logout
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function() {
+                signOut(auth).then(() => {
+                    // Sign-out successful
+                    console.log("Logout successful");
+                }).catch((error) => {
+                    // An error happened
+                    console.error("Logout error:", error);
+                });
+            });
+        } else {
+            console.error("Logout button not found in the DOM");
+        }
+    
+    } catch (error) {
+        console.error("Firebase initialization error:", error);
+        // Continue with splash screen even if Firebase fails
+    }
+    
+    // Show UI for authenticated users
+    function showAuthenticatedUI(user) {
+        if (userProfile && userGreeting) {
+            // Display the user's name
+            const firstName = user.displayName ? user.displayName.split(' ')[0] : "User";
+            userGreeting.textContent = `Hi, ${firstName}`;
+            
+            // Show user profile section and hide login buttons
+            userProfile.style.display = 'flex';
+            loginButtons.style.display = 'none';
+            
+            console.log("Authenticated UI shown for:", firstName);
+        } else {
+            console.error("User profile or greeting elements not found");
+        }
+    }
+    
+    // Show UI for unauthenticated users
+    function showUnauthenticatedUI() {
+        if (userProfile && loginButtons) {
+            // Hide user profile section and show login buttons
+            userProfile.style.display = 'none';
+            loginButtons.style.display = 'flex';
+            
+            console.log("Unauthenticated UI shown");
+        } else {
+            console.error("User profile or login buttons elements not found");
+        }
+    }
+
+    // Chatbox functionality
+    function appendMessage(sender, text) {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message", sender);
+        const avatarDiv = document.createElement("div");
+        avatarDiv.classList.add("avatar");
+        const textDiv = document.createElement("div");
+        textDiv.classList.add("text");
+        textDiv.textContent = text;
+        
+        if (sender === "bot") {
+            messageDiv.appendChild(avatarDiv);
+            messageDiv.appendChild(textDiv);
+        } else {
+            messageDiv.appendChild(textDiv);
+            messageDiv.appendChild(avatarDiv);
+        }
+        
+        if (chatbox && inputContainer) {
+            chatbox.insertBefore(messageDiv, inputContainer);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    }
+    
+    function getBotResponse(userInput) {
+        return fetch('http://127.0.0.1:5000/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: userInput }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            return data.response;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            return "Sorry, I'm having trouble connecting to the server. Please try again later.";
+        });
+    }
+    
+    function handleUserInput() {
+        if (!inputField) return;
+        
+        const userText = inputField.value.trim();
+        if (!userText) return;
+        
+        appendMessage("user", userText);
+        inputField.value = "";
+        
+        getBotResponse(userText).then((botResponse) => {
+            appendMessage("bot", botResponse);
+        });
+    }
+    
+    if (sendButton) {
+        sendButton.addEventListener("click", handleUserInput);
+    }
+    
+    if (inputField) {
+        inputField.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                handleUserInput();
+            }
+        });
+    }
+
+    // Check if Speech Recognition is supported
     window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition;
     let isListening = false;
-
+    
     if (window.SpeechRecognition) {
         recognition = new SpeechRecognition();
-        recognition.interimResults = false;
+        recognition.interimResults = false; 
         recognition.continuous = false;
         recognition.lang = "en-US";
 
         recognition.onstart = function () {
             isListening = true;
-            micButton.classList.add("listening");
+            if (micButton) micButton.classList.add("listening"); 
+            if (micIcon) micIcon.classList.add("listening");
         };
 
         recognition.onresult = function (event) {
@@ -34,7 +230,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     finalTranscript += event.results[i][0].transcript;
                 }
             }
-            textArea.value = finalTranscript.trim(); // Set the value directly
+
+            if (inputField) inputField.value += finalTranscript.trim() + " "; 
         };
 
         recognition.onerror = function (event) {
@@ -43,152 +240,101 @@ document.addEventListener("DOMContentLoaded", function () {
 
         recognition.onend = function () {
             isListening = false;
-            micButton.classList.remove("listening");
+            if (micButton) micButton.classList.remove("listening"); 
+            if (micIcon) micIcon.classList.remove("listening");
         };
 
-        micButton.addEventListener("click", function () {
-            if (!isListening) {
-                textArea.value = ""; // Clear the input
-                recognition.start();
-            } else {
-                recognition.stop();
+        if (micButton) {
+            micButton.addEventListener("click", function () {
+                if (!isListening) {
+                    recognition.start();
+                } else {
+                    recognition.stop();
+                }
+            });
+        }
+        
+        if (micIcon) {
+            micIcon.addEventListener('click', () => {
+                if (!isListening) {
+                    recognition.start();
+                    console.log('Website: Start listening...');
+                } else {
+                    recognition.stop();
+                    console.log('Website: Stop listening.');
+                }
+            });
+        }
+    } else {
+        if (micButton) micButton.style.display = "none";
+        if (micIcon) micIcon.style.display = "none";
+        console.log("Speech recognition not supported in this browser");
+    }
+
+    // Feature box animations
+    const featureBoxes = document.querySelectorAll('.feature-box');
+    const containers = document.querySelectorAll('.container');
+    
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.remove('hidden');
+                observer.unobserve(entry.target);
             }
         });
+    }, observerOptions);
 
-    } else {
-        console.warn("Speech recognition not supported in this browser.");
-        micButton.style.display = "none"; // Hide the button if no support
-    }
-
-      //Autogrow for textbox
-        textArea.addEventListener('input', function () {  // on typing
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
+    // Initialize animations for feature boxes
+    if (featureBoxes.length > 0) {
+        featureBoxes.forEach(box => {
+            box.classList.add('hidden');
+            observer.observe(box);
         });
-
-
-    // Send message and interact with backend API
-    sendButton.addEventListener("click", function () {
-        const userMessage = textArea.value;
-
-        if (userMessage.trim() !== "") {
-            const userMessageDiv = addUserMessage(userMessage);  // Display user message Store user message element
-
-            //Creating loading indicator element dynamically
-            const loadingIndicator = createLoadingIndicator();  // Creating a three dots loading function
-            messagesContainer.prepend(loadingIndicator); //Add that to container, so we can fix the loader.
-
-            // Send the message to the Ollama backend
-            fetch("http://localhost:5000/api/chat", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ message: userMessage }),
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    if (data.error) {
-                        console.error("Backend Error:", data.error);
-                        const botMessageDiv = addBotMessage("Error: " + data.error);
-                         messagesContainer.removeChild(loadingIndicator);  //Remove loader on fail
-                    } else {
-                        const botResponse = data.response;
-                        const botMessageDiv = addBotMessage(botResponse);
-                         messagesContainer.removeChild(loadingIndicator);  //Remove loader
-
-                    }
-                })
-                .catch((error) => {
-                    console.error("Fetch Error:", error);
-                    const botMessageDiv = addBotMessage("Sorry, I couldn't reach the server.");
-                       messagesContainer.removeChild(loadingIndicator);  //Remove loader
-
-                })
-                .finally(() => {  // We wont set the height to inital as
-                 textArea.style.height = '40px';   //set to initial height so it wont stay expanded.
-                });
-
-            textArea.value = ""; // Clear the input field
-        }
-    });
-
-
-    // Helper functions for UI
-    function addUserMessage(message) {
-        const userMessageDiv = document.createElement("div");
-        userMessageDiv.classList.add("message", "user");
-        userMessageDiv.innerHTML = `<div class="text">${message}</div><div class="avatar"></div>`;
-        messagesContainer.prepend(userMessageDiv);  // Append to the STARTING
-        messagesContainer.scrollTop = 0;  // Scroll to top, so that newest message is displayed
-        return userMessageDiv;   // We returning the div
-
+        
+        console.log("Feature box animation observers initialized");
     }
 
-    function addBotMessage(message) {
-        const botMessageDiv = document.createElement("div");
-        botMessageDiv.classList.add("message", "bot");
-        botMessageDiv.innerHTML = `<div class="avatar"></div><div class="text">${message}</div>`;
-        messagesContainer.prepend(botMessageDiv); // Append to the STARTING
-        messagesContainer.scrollTop = 0;  // Scroll to top, so that newest message is displayed
-        return botMessageDiv;      // We returning the div
+    // Initialize animations for containers
+    if (containers.length > 0) {
+        containers.forEach(container => {
+            container.classList.add('hidden');
+            observer.observe(container);
+        });
+        
+        console.log("Container animation observers initialized");
     }
-      //Function that creates loading indicator
-     function createLoadingIndicator(){
-            const loadingIndicator = document.createElement("div");
-            loadingIndicator.classList.add("loading-indicator");
-            loadingIndicator.innerHTML = `
-                 <span></span>
-                 <span></span>
-                 <span></span>
-            `;
-            return loadingIndicator;
-     }
 
-
-    //Functions to handle hide and show loading - we dont need these anymore.
     // Splash Screen Logic
+    console.log("Starting splash screen animation");
     setTimeout(() => {
-        splashScreen.classList.add('hidden');
+        if (splashScreen) {
+            splashScreen.classList.add('hidden');
+            console.log("Splash screen hidden");
+        } else {
+            console.error("Splash screen element not found");
+        }
 
         setTimeout(() => {
-            headerContent.classList.remove('hidden');
-            mainContent.classList.remove('hidden');
-            mainSections.classList.remove('hidden');
-
-            // Initialize Intersection Observer for animations
-            const featureBoxes = document.querySelectorAll('.feature-box');
-            const containers = document.querySelectorAll('.container');
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1
-            };
-
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.remove('hidden');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            featureBoxes.forEach(box => {
-                box.classList.add('hidden');
-                observer.observe(box);
-            });
-
-            containers.forEach(container => {
-                container.classList.add('hidden');
-                observer.observe(container);
-            });
-
+            if (headerContent) {
+                headerContent.classList.remove('hidden');
+                console.log("Header content shown");
+            }
+            if (mainContent) {
+                mainContent.classList.remove('hidden');
+                console.log("Main content shown");
+            }
+            if (mainSections) {
+                mainSections.classList.remove('hidden');
+                console.log("Main sections shown");
+            }
         }, 1000);
     }, 3000);
+    
+    console.log("DOMContentLoaded handler completed");
 });
