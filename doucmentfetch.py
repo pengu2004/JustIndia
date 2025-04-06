@@ -4,12 +4,11 @@ import os
 from difflib import get_close_matches
 
 app = Flask(__name__)
-CORS(app)  # Allow requests from frontend
+CORS(app) 
 
 # Path to the directory where your legal documents are stored
 DOCUMENTS_DIR = r'C:\Users\USER\Downloads\drive-download-20250406T143438Z-001'
 
-# Get the list of all document filenames at startup
 document_files = os.listdir(DOCUMENTS_DIR)
 
 def find_best_matching_document(query):
@@ -27,7 +26,6 @@ def chat_api():
     if 'give the document' in user_input.lower():
         match = find_best_matching_document(user_input)
         if match:
-            # Construct a proper localhost download link
             download_link = f"<a href='http://localhost:5000/download?document={match}' target='_blank'>{match}</a>"
             return jsonify({'response': f"Here is your document: {download_link}"})
         else:
