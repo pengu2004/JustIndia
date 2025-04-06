@@ -338,3 +338,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     
     console.log("DOMContentLoaded handler completed");
 });
+
+    function autoGrowTextarea() {
+        if (!textArea) return;
+        textArea.style.height = 'auto';
+        const maxHeight = 120;
+        const newHeight = Math.min(textArea.scrollHeight, maxHeight);
+        textArea.style.height = newHeight + 'px';
+    }
+    if (textArea) {
+        textArea.addEventListener('input', autoGrowTextarea);
+    }
+
