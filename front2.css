@@ -65,6 +65,19 @@ p {
     max-width: 400px;
     padding: 20px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
+}
+
+
+.chatbox .messages-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
+    position: relative;  /* For positioning the loader */
+    min-height: 50px;   /* Ensure there's space for the loader */
 }
 
 .chatbox .message {
@@ -80,13 +93,16 @@ p {
     justify-content: flex-end;
 }
 
-.chatbox .message .avatar{
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+.chatbox .message .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     background: #d1d5db;
-  margin: 5px;
+    margin: 5px;
+    position: relative;
+
 }
+
 .chatbox .message .text {
     background-color: #e5e7eb;
     padding: 10px 15px;
@@ -107,17 +123,19 @@ p {
     margin-top: 20px;
     border-top: 1px solid #ccc;
     padding-top: 15px;
-
 }
 
-.chatbox .input input {
+.chatbox .input textarea {
     flex: 1;
     padding: 10px;
     border: 1px solid #ccc;
-
     border-radius: 25px;
     outline: none;
     font-size: 1rem;
+    resize: none; /* Remove manual resizing */
+    overflow: hidden;
+    min-height: 40px;  /* Set a starting height */
+    height: auto;        /* Let height expand */
 }
 
 .chatbox .input .mic-icon,
@@ -138,11 +156,11 @@ p {
 .chatbox .input button:hover {
     background-color: #160c87;
 }
+
 .chatbox .input .mic-icon.listening {
     background: #f32424;
     animation: pulse 1.5s infinite;
 }
-
 
 @keyframes pulse {
     0% {
@@ -155,6 +173,7 @@ p {
         transform: scale(1);
     }
 }
+
 .chatbox .input .mic-icon svg,
 .chatbox .input button svg {
     width: 20px;
@@ -162,9 +181,8 @@ p {
     fill: #ffffff;
 }
 
-
-@media (max-width: 768px){
-  .chatbox .message .text{
+@media (max-width: 768px) {
+  .chatbox .message .text {
     max-width: 60%;
   }
 }
@@ -218,51 +236,12 @@ html {
     flex: 1;
     min-width: 250px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 1.5s ease-out, box-shadow 1.7s ease-out; /* Slower Animation for Feature Boxes */
+    transition: transform 1.5s ease-out, box-shadow 1.7s ease-out;
 }
 
 .feature-box:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-}
-#user-profile {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-#user-greeting {
-    color: #4f46e5;
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-#logout-btn {
-    background-color: #4f46e5;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 1.1rem;
-}
-
-#logout-btn:hover {
-    background-color: #3b38b7;
-}
-
-#google-login-btn {
-    background-color: #4f46e5;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 1.1rem;
-}
-
-#google-login-btn:hover {
-    background-color: #3b38b7;
 }
 
 .feature-box h2 {
@@ -277,13 +256,11 @@ html {
     line-height: 1.5;
 }
 
-
 .feature-item {
     margin-bottom: 25px;
 }
 
 .feature-item h2 {
-
     font-size: 1.8rem;
     color: #4f46e5;
     margin-bottom: 10px;
@@ -312,7 +289,6 @@ html {
     color: #ffffff;
     margin-bottom: 30px;
 }
-
 
 .research-section {
     width: 90%;
@@ -376,16 +352,18 @@ html {
     font-size: 0.9rem;
     font-weight: bold;
 }
+
 .index-bubble {
     background-color: #e248a4;
 }
+
 .year-bubble {
     background-color: #72f2bb;
 }
+
 .edition-bubble {
     background-color: #8083ff;
 }
-
 
 .featured-title {
     font-size: 2.2rem;
@@ -455,19 +433,23 @@ html {
     .research-container {
         flex-direction: column;
     }
+
     .featured-research-block {
         flex: 1;
     }
+
     .editor-picks-container {
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-between;
     }
+
     .editor-picks-container .editor-pick-block {
         width: calc(50% - 10px);
         min-width: auto;
         margin-bottom: 10px;
     }
+
     .featured-title {
         font-size: 1.8rem;
     }
@@ -490,6 +472,7 @@ html {
     .editor-picks-container {
         flex-direction: column;
     }
+
     .editor-picks-container .editor-pick-block {
         width: 100%;
     }
@@ -522,8 +505,9 @@ nav.header-nav {
     color: white;
 }
 
-.logo-img {
-    height: 50px; /* Increased logo height */
+.logo img {
+    height: 50px;
+    /* Increased logo height */
     margin-right: 10px;
     height: auto;
     display: block;
@@ -532,7 +516,8 @@ nav.header-nav {
 
 .logo-text {
     font-weight: bold;
-    font-size: 1.4rem; /* Increased logo text size */
+    font-size: 1.4rem;
+    /* Increased logo text size */
 }
 
 .header-nav ul {
@@ -543,7 +528,8 @@ nav.header-nav {
 }
 
 .header-nav li {
-    margin: 0 20px; /* Increased spacing between nav links */
+    margin: 0 20px;
+    /* Increased spacing between nav links */
 }
 
 .header-nav li:first-child {
@@ -557,7 +543,8 @@ nav.header-nav {
 .header-nav a {
     text-decoration: none;
     color: white;
-    font-size: 1.1rem; /* Increased nav link font size */
+    font-size: 1.1rem;
+    /* Increased nav link font size */
     transition: color 0.3s ease-in-out;
 }
 
@@ -567,17 +554,21 @@ nav.header-nav {
 
 .header-buttons {
     display: flex;
-    gap: 15px; /* Increased spacing between buttons */
+    gap: 15px;
+    /* Increased spacing between buttons */
 }
 
 .header-button {
-    padding: 12px 25px; /* Increased padding for buttons */
-    border-radius: 30px; /* More rounded buttons */
+    padding: 12px 25px;
+    /* Increased padding for buttons */
+    border-radius: 30px;
+    /* More rounded buttons */
     border: none;
     cursor: pointer;
     font-weight: bold;
     text-decoration: none;
-    font-size: 1.1rem; /* Increased button text size */
+    font-size: 1.1rem;
+    /* Increased button text size */
     color: #ffffff;
     transition: background-color 0.3s ease-in-out;
 }
@@ -599,11 +590,13 @@ nav.header-nav {
 .signup-button:hover {
     background-color: #7b5cb4;
 }
-.testimonials-section{
+
+.testimonials-section {
     text-align: center;
     margin-top: 40px;
 }
-.testimonials-section h2{
+
+.testimonials-section h2 {
     font-size: 3.2rem;
     margin-bottom: 20px;
     color: #6760f1;
@@ -633,6 +626,7 @@ nav.header-nav {
     border-radius: 50%;
     margin-bottom: 10px;
 }
+
 .testimonial-name {
     font-weight: bold;
     margin-bottom: 5px;
@@ -643,10 +637,11 @@ nav.header-nav {
     margin-bottom: 10px;
 
 }
-.testimonial-text{
-  font-style: italic;
-  font-size: 1rem;
-  color: #333;
+
+.testimonial-text {
+    font-style: italic;
+    font-size: 1rem;
+    color: #333;
 }
 
 /* Footer Styles */
@@ -658,6 +653,7 @@ footer {
     margin-top: 40px;
     font-size: 0.9rem;
 }
+
 .about-us-section {
     background: rgba(255, 255, 255, 0.8);
     border-radius: 10px;
@@ -719,38 +715,38 @@ footer {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #0d1117; 
+    background-color: #0d1117;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 200;
     opacity: 1;
-    transition: opacity 1s ease-out; 
+    transition: opacity 1s ease-out;
 }
 
 .splash-screen.hidden {
-    opacity: 0; 
-    visibility: hidden; 
-    pointer-events: none; 
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .splash-text {
     font-size: 5rem;
-    color: #6760f1; 
+    color: #6760f1;
     font-weight: bold;
-    opacity: 0; 
+    opacity: 0;
     animation: fadeIn 1s ease-out 0.5s forwards, fadeOut 1s ease-in 3s forwards;
 }
 
 @keyframes fadeIn {
     to {
-        opacity: 1; 
+        opacity: 1;
     }
 }
 
 @keyframes fadeOut {
     to {
-        opacity: 0; 
+        opacity: 0;
     }
 }
 
@@ -764,3 +760,39 @@ footer {
     animation: pulse 1.5s infinite;
 }
 
+/* --- Input Area Dots Loader --- */
+.input-dots-loader {
+    display: none; /* Initially hidden */
+    align-items: center; /* Vertically center dots */
+    margin-left: 8px; /* Adjust spacing from send button */
+}
+
+.input-dots-loader.active {
+    display: flex; /* Show when active class is added */
+}
+
+.input-dots-loader span {
+    display: inline-block;
+    width: 6px; /* Dot size */
+    height: 6px;
+    margin-right: 4px;
+    border-radius: 50%;
+    background-color: #888; /* Dot color - adjust as needed */
+    opacity: 0.6;
+    animation: pulse-dots 1.5s infinite ease-in-out;
+}
+
+/* Staggered animation for each dot */
+.input-dots-loader span:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.input-dots-loader span:nth-child(3) {
+    animation-delay: 1s;
+}
+
+@keyframes pulse-dots {
+    0% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0.6; transform: scale(1); }
+}
